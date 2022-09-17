@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 
@@ -10,12 +10,16 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Categories'
 
+    def get_absolute_url(self):
+        return reverse("store:category_list", args=[self.slug])
+    
+
     def __str__(self):
         return self.name
 
 
 class Product(models.Model):
-    categories = models.ForeignKey(Category, verbose_name=_("Categories"), related_name='product', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, verbose_name=_("Category"), related_name='product', on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, verbose_name=_("Created by"), on_delete=models.CASCADE, related_name="product_creator")
     title = models.CharField(_("Title"), max_length=255)
     author = models.CharField(_("Author"), max_length=255, default='admin')
@@ -31,6 +35,9 @@ class Product(models.Model):
     class Meta:
         verbose_name_plural = "Products"
         ordering = ('-created',)
+
+    def get_absolute_url(self):
+        return reverse('store:product_detail', args=[self.slug])
 
     def __str__(self):
         return self.title
