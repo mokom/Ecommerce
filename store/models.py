@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
+
 
 class Category(models.Model):
     name = models.CharField(_("name"), max_length=255, db_index=True)
@@ -11,9 +12,8 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
     def get_absolute_url(self):
-        return reverse("store:category_list", args=[self.slug])
+        return reverse("store:category_list", args=[self.slug])          
     
-
     def __str__(self):
         return self.name
 
@@ -41,5 +41,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-        
-    

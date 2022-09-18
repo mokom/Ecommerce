@@ -1,4 +1,4 @@
-from unittest import skip # gives us ability to skip test
+from unittest import skip  # gives us ability to skip test
 
 from django.contrib.auth.models import User
 from django.http import HttpRequest

@@ -2,3 +2,7 @@ coverage report -> gives an overview of tests ran on project
 coverage run --omit='*/venv/*' manage.py test -> run tests from tests files
 coverge run manage.py test
 coverage html -> will create an htmlcov directory in ur project 
+
+
+flake8 -> scan code and highlight lines that don't respect python styling conventions
+isort -> sort imports alphabetically & by type

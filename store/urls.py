@@ -1,4 +1,3 @@
-from ast import Store
 from django.urls import path
 
 from . import views
