@@ -4,6 +4,11 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 
+class ProductManager(models.Manager):
+    def get_queryset(self):
+        return super(ProductManager, self).get_queryset().filter(is_active=True)
+
+
 class Category(models.Model):
     name = models.CharField(_("name"), max_length=255, db_index=True)
     slug = models.SlugField(_("slug"), max_length=255, unique=True)
@@ -12,8 +17,8 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
     def get_absolute_url(self):
-        return reverse("store:category_list", args=[self.slug])          
-    
+        return reverse("store:category_list", args=[self.slug])
+  
     def __str__(self):
         return self.name
 
@@ -24,13 +29,15 @@ class Product(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     author = models.CharField(_("Author"), max_length=255, default='admin')
     description = models.TextField(_("Description"), blank=True)
-    image = models.ImageField(_("Image"), upload_to="images/")
+    image = models.ImageField(_("Image"), upload_to="images/", default="images/default.png")
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     price = models.DecimalField(_("Price"), max_digits=4, decimal_places=2)
     in_stock = models.BooleanField(_("In Stock"), default=True)
     is_active = models.BooleanField(_("Is_Active"), default=True)
     created = models.DateTimeField(_("Created"), auto_now_add=True)
     updated = models.DateTimeField(_("Updated"), auto_now=True)
+    objects = models.Manager()
+    products = ProductManager()
 
     class Meta:
         verbose_name_plural = "Products"
