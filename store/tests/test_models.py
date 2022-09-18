@@ -37,7 +37,7 @@ class TestProductsModel(TestCase):
         """
         Category.objects.create(name='django', slug='django')
         User.objects.create(username='admin')
-        self.data1 = Product.objects.create(categories_id=1, title='django beginners', created_by_id=1,
+        self.data1 = Product.objects.create(category_id=1, title='django beginners', created_by_id=1,
                                             slug='django-beginners', price='20.00', image='django')
         # self.data2 = Product.products.create(category_id=1, title='django advanced', created_by_id=1,
         #                                      slug='django-advanced', price='20.00', image='django', is_active=False)
@@ -49,4 +49,16 @@ class TestProductsModel(TestCase):
         data = self.data1
         self.assertTrue(isinstance(data, Product))
         self.assertEqual(str(data), 'django beginners')
+
+
+    def test_products_url(self):
+        """
+        Test product model slug and URL reverse
+        """
+        data = self.data1
+        url = reverse('store:product_detail', args=[data.slug])
+        self.assertEqual(url, '/item/django-beginners/')
+        response = self.client.post(
+            reverse('store:product_detail', args=[data.slug]))
+        self.assertEqual(response.status_code, 200)
 
