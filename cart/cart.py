@@ -1,4 +1,7 @@
 from django.conf import settings
+from store.models import Product
+
+from decimal import Decimal
 
 class Cart():
     """
@@ -24,10 +27,59 @@ class Cart():
         if product_id not in self.cart:
             self.cart[product_id] = {"price":str(product.price), 'quantity': quantity}
         print("self.add")
-        self.session.modified = True
+        self.save()
+
+    def __iter__(self):
+        """
+        Iterate over the items in the cart and get the products
+        from the database.
+        """
+        product_ids = self.cart.keys()
+        # get the product objects and add them to the cart
+        products = Product.products.filter(id__in=product_ids)
+        cart = self.cart.copy()
+
+        for product in products:
+            cart[str(product.id)]['product'] = product
+        for item in cart.values():
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
+            yield item
 
     def __len__(self):
         """
         Count all items in the cart.
         """
         return sum(item['quantity'] for item in self.cart.values())
+
+    def get_total_price(self):
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+
+    
+    def remove(self, product_id):
+        """
+        Remove product from cart
+        """
+        product_id = str(product_id)
+        if product_id in self.cart:
+            del self.cart[product_id]
+            self.save()
+
+
+    def update(self, product_id, quantity):
+        """
+        Update values in session data
+        """
+        product_id = str(product_id)
+        
+        if product_id in self.cart:
+            self.cart[product_id]["quantity"] = quantity
+        else:
+            self.cart[product_id]["quantity"] += quantity
+
+        self.save()
+            
+
+    def save(self):
+        # mark the session as "modified" to make sure it gets saved
+        self.session.modified = True
