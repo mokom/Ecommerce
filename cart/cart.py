@@ -22,11 +22,13 @@ class Cart():
         """
         Add and updateing the users basket session data
         """
-        product_id = product.id
+        product_id = str(product.id)
 
-        if product_id not in self.cart:
-            self.cart[product_id] = {"price":str(product.price), 'quantity': quantity}
-        print("self.add")
+        if product_id in self.cart: # should product be added from the single product page
+            self.cart[product_id]['quantity'] = quantity
+        else:
+            self.cart[product_id] = {'price': str(product.price), 'quantity': quantity}
+        
         self.save()
 
     def __iter__(self):
@@ -74,8 +76,6 @@ class Cart():
         
         if product_id in self.cart:
             self.cart[product_id]["quantity"] = quantity
-        else:
-            self.cart[product_id]["quantity"] += quantity
 
         self.save()
             
