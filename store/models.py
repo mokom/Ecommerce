@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -25,7 +25,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name=_("Category"), related_name='product', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, verbose_name=_("Created by"), on_delete=models.CASCADE, related_name="product_creator")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Created by"), on_delete=models.CASCADE, related_name="product_creator")
     title = models.CharField(_("Title"), max_length=255)
     author = models.CharField(_("Author"), max_length=255, default='admin')
     description = models.TextField(_("Description"), blank=True)

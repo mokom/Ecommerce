@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store.apps.StoreConfig',
     'cart.apps.CartConfig',
+    'account.apps.AccountConfig',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 CART_SESSION_ID = 'cart'
+
+
+# Custom user model
+ACCOUNT_USER_MODEL_USERNAME_FIELD  = None
+AUTH_USER_MODEL = 'account.UserBase'
+LOGIN_REDIRECT_URL = '/account/dashboard'
+LOGIN_URL = '/account/login/'
