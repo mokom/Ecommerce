@@ -2,7 +2,7 @@ from importlib import import_module
 from unittest import skip  # gives us ability to skip test
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -23,7 +23,8 @@ class TestViewResponses(TestCase):
         Create test objects: client, user, category & product
         """
         self.c = Client()
-        User.objects.create(username='admin')
+        User = get_user_model()
+        User.objects.create(email='admin@admin.com')
         Category.objects.create(name='django', slug='django')
         Product.objects.create(category_id=1, title='django beginners', created_by_id=1,
                                slug='django-beginners', price='20.00', image='django')

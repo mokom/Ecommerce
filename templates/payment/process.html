@@ -1,0 +1,100 @@
+{% load static %}
+
+<style>
+
+
+    a.button, input[type="submit"] {
+        color:#fff;
+        background:#5993bb;
+        border-radius:4px;
+        padding:10px 20px;
+        font-size:14px;
+        border:0;
+    }
+
+    /* braintree hosted fields */
+    form div.field {
+        font-size:13px;
+        color:#666;
+        width:300px;
+        height:22px;
+        margin-bottom:10px;
+        padding:6px 12px;
+        border:0;
+        background:#efefef;
+        color:#666;
+        border-radius:4px;
+    }
+
+</style>
+
+
+<h1>Pay by credit card</h1>
+<form id="payment" method="post">
+
+    <label for="card-number">Card Number</label>
+    {% comment %} <div id="card-number" class="field"></div> {% endcomment %}
+    <input id="card-number" type="text" class="form-control field" placeholder="Card Number"> 
+
+    <label for="cvv">CVV</label>
+    {% comment %} <div id="cvv" class="field"></div> {% endcomment %}
+    <input id="cvv" type="text" class="form-control field" placeholder="CVV"> 
+
+    <label for="expiration-date">Expiration Date</label>
+    {% comment %} <div id="expiration-date" class="field"></div> {% endcomment %}
+    <input id="expiration-date" type="text" class="form-control field" placeholder="Expiration date mm/yy"> 
+
+    <input type="hidden" id="nonce" name="payment_method_nonce" value="">
+    
+    {% csrf_token %}
+    <input type="submit" value="Pay">
+</form>
+<!-- includes the Braintree JS client SDK -->
+<script src="https://js.braintreegateway.com/web/3.44.2/js/client.min.js"></script>
+<script src="https://js.braintreegateway.com/web/3.44.2/js/hosted-fields.min.js"></script>
+
+<script>
+    var form = document.querySelector('#payment');
+    var submit = document.querySelector('input[type="submit"]');
+    braintree.client.create({
+        authorization: '{{ client_token }}'
+    }, function (clientErr, clientInstance) {
+        if (clientErr) {
+            console.error(clientErr);
+            return;
+        }
+        braintree.hostedFields.create({
+            client: clientInstance,
+            styles: {
+                'input': {'font-size': '13px'},
+                'input.invalid': {'color': 'red'},
+                'input.valid': {'color': 'green'}
+            },
+            fields: {
+                number: {selector: '#card-number'},
+                cvv: {selector: '#cvv'},
+                expirationDate: {selector: '#expiration-date'}
+            }
+        }, function (hostedFieldsErr, hostedFieldsInstance) {
+            if (hostedFieldsErr) {
+                console.error(hostedFieldsErr);
+                return;
+            }
+            
+            submit.removeAttribute('disabled');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
+                    if (tokenizeErr) {
+                        console.error(tokenizeErr);
+                        return;
+                    }
+                    // set nonce to send to the server
+                    document.getElementById('nonce').value = payload.nonce;
+                    // submit form
+                    document.getElementById('payment').submit();
+                });
+            }, false);
+        });
+    });
+</script>
