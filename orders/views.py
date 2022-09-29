@@ -1,15 +1,14 @@
-from django.http.response import JsonResponse
-
 from cart.cart import Cart
+from django.http.response import JsonResponse
 
 from .models import Order, OrderItem
 
 
 def add(request):
     cart = Cart(request)
-    if request.POST.get('action') == 'POST':
+    if request.POST.get("action") == "POST":
 
-        order_key = request.POST.get('order_key')
+        order_key = request.POST.get("order_key")
         user_id = request.user.id
         carttotal = cart.get_total_price()
 
@@ -19,22 +18,20 @@ def add(request):
         else:
             order = Order.objects.create(
                 user_id=user_id,
-                full_name='name',
-                address1='add1',
-                address2='add2',
+                full_name="name",
+                address1="add1",
+                address2="add2",
                 total_paid=carttotal,
-                order_key=order_key)  # actual address functionality will be built later
+                order_key=order_key,
+            )  # actual address functionality will be built later
             order_id = order.pk
 
             for item in cart:
                 OrderItem.objects.create(
-                    order_id=order_id,
-                    product=item['product'],
-                    price=item['price'],
-                    quantity=item['quantity']
+                    order_id=order_id, product=item["product"], price=item["price"], quantity=item["quantity"]
                 )
 
-        response = JsonResponse({'success': 'Return something'})
+        response = JsonResponse({"success": "Return something"})
         return response
 
 
