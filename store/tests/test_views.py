@@ -70,7 +70,7 @@ class TestViewResponses(TestCase):
         request.session = engine.SessionStore()
         response = product_all(request)
         html = response.content.decode('utf8')
-        self.assertIn('<title>Store</title>', html)
+        self.assertIn('<title>Store - Low Prices in Books & more</title>', html)
         self.assertTrue(html.startswith('\n<!DOCTYPE html>\n'))
         self.assertEqual(response.status_code, 200)
 
