@@ -1,4 +1,5 @@
 import json
+import os
 
 import stripe
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+from django.conf import settings
 
 from cart.cart import Cart
 from orders.views import payment_confirmation
@@ -31,14 +33,16 @@ def CartView(request):
 
     print(total)
 
-    stripe.api_key = 'sk_test_51JCUg3KvELx4Sm5hfSomtogvUhgSZTH0bTL8AIO3tA3os8jQYXVxiDlJSD7ao07xiuwCLcZI2rIb4oCxaDTLI2DZ00KEgxP5bQ'
+    stripe.api_key = settings.STRIPE_SECRET_KEY
     intent = stripe.PaymentIntent.create(
         amount=total, #amt to send
         currency='gbp',
         metadata={'userid': request.user.id} # Used to match up order with user
     ) # intent returns a client key from stripe each time a payment is made 
 
-    return render(request, 'payment/payment.html', {'client_secret': intent.client_secret})
+    return render(request, 'payment/payment.html', {
+        'client_secret': intent.client_secret,
+        'STRIPE_PUBLISHABLE_KEY': os.environ.get('STRIPE_PUBLISHABLE_KEY')})
 
 
 @csrf_exempt
