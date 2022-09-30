@@ -1,8 +1,5 @@
-
 from .models import Category
 
 
 def categories(request):
-    return {
-        'categories': Category.objects.all()  # use as context processor
-    }
+    return {"categories": Category.objects.filter(level=0)}  # use as context processor

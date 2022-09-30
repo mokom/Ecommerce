@@ -27,7 +27,7 @@ class Cart:
         if product_id in self.cart:  # should product be added from the single product page
             self.cart[product_id]["quantity"] = quantity
         else:
-            self.cart[product_id] = {"price": str(product.price), "quantity": quantity}
+            self.cart[product_id] = {"price": str(product.regular_price), "quantity": quantity}
 
         self.save()
 
@@ -38,7 +38,7 @@ class Cart:
         """
         product_ids = self.cart.keys()
         # get the product objects and add them to the cart
-        products = Product.products.filter(id__in=product_ids)
+        products = Product.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
 
         for product in products:
@@ -53,6 +53,9 @@ class Cart:
         Count all items in the cart.
         """
         return sum(item["quantity"] for item in self.cart.values())
+    
+    def get_subtotal_price(self):
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
 
     def get_total_price(self):
         subtotal = sum(Decimal(item["price"]) * item["quantity"] for item in self.cart.values())

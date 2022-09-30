@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "account.apps.AccountConfig",
     "payment.apps.PaymentConfig",
     "orders.apps.OrdersConfig",
+    "mptt",
 ]
 
 MIDDLEWARE = [
