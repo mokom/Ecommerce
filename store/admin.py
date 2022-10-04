@@ -10,7 +10,14 @@ from .models import (
     ProductType,
 )
 
-admin.site.register(Category, MPTTModelAdmin)
+
+@admin.register(Category)
+class CategoryAdmin(MPTTModelAdmin):
+    list_display = ["name", "slug"]
+    prepopulated_fields = {"slug": ("name",)}
+
+
+# admin.site.register(Category, MPTTModelAdmin)
 
 
 class ProductSpecificationInline(admin.TabularInline):
@@ -35,18 +42,8 @@ class ProductSpecificationValueInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductSpecificationValueInline, ProductImageInline]
+    list_display = ["title", "slug", "regular_price", "created_at", "is_active", "updated_at"]
+    list_filter = ["is_active"]
+    list_editable = ["regular_price", "is_active"]
+    prepopulated_fields = {"slug": ("title",)}
 
-
-# @admin.register(Category)
-# class CategoryAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'slug']
-#     prepopulated_fields = {'slug': ('name',)}
-
-
-# @admin.register(Product)
-# class ProductAdmin(admin.ModelAdmin):
-#     list_display = ['title', 'author', 'slug', 'price',
-#                     'in_stock', 'created', 'updated']
-#     list_filter = ['in_stock', 'is_active']
-#     list_editable = ['price', 'in_stock']
-#     prepopulated_fields = {'slug': ('title',)}

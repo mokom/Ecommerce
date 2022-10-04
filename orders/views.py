@@ -36,7 +36,6 @@ def add(request):
 
 
 def payment_confirmation(data):
-    print("updateing billing statuss: ", data)
     Order.objects.filter(order_key=data).update(billing_status=True)
 
 

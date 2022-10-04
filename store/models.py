@@ -1,6 +1,3 @@
-from itertools import product
-from tabnanny import verbose
-
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -99,6 +96,7 @@ class Product(models.Model):
     is_active = models.BooleanField(_("Product visibility"), help_text=_("Change product visibility"), default=True)
     created_at = models.DateTimeField(_("Created"), auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(_("Updated"), auto_now=True)
+    users_wishlist = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="user_wishlist", blank=True)
 
     class Meta:
         verbose_name = _("Product")
